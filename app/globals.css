@@ -1,0 +1,530 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme - improved color scheme */
+    --background: 210 40% 98%;
+    --background-secondary: 210 40% 96%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Changed primary color to blue for light theme */
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 221 83% 53%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark theme - kept the same */
+    --background: 240 10% 3.9%;
+    --background-secondary: 240 10% 5.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 262 83.3% 57.8%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 262 83.3% 57.8%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 262 83.3% 57.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Light theme gradient text */
+:root:not(.dark) .gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600;
+}
+
+/* Dark theme gradient text */
+.dark .gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500;
+}
+
+.gradient-border {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0.5rem;
+  padding: 2px;
+  background: linear-gradient(to right, theme("colors.blue.500"), theme("colors.indigo.500"));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.dark .gradient-border::before {
+  background: linear-gradient(to right, theme("colors.purple.500"), theme("colors.pink.500"));
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 3D Card Effect */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.card-3d:hover {
+  transform: translateZ(20px) rotateX(5deg) rotateY(5deg);
+}
+
+.card-3d-content {
+  transform: translateZ(20px);
+}
+
+/* Animated gradient background */
+.animated-gradient {
+  background: linear-gradient(-45deg, #3b82f6, #6366f1, #8b5cf6, #ec4899);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+.dark .animated-gradient {
+  background: linear-gradient(-45deg, #8b5cf6, #ec4899, #3b82f6, #10b981);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Glow effect - light theme */
+:root:not(.dark) .glow {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+:root:not(.dark) .glow:hover,
+:root:not(.dark) .glow-strong {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
+}
+
+/* Glow effect - dark theme */
+.dark .glow {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+.dark .glow:hover,
+.dark .glow-strong {
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.8);
+}
+
+/* Floating animation */
+.floating {
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* 3D text effect */
+.text-3d {
+  text-shadow:
+    0 1px 0 #ccc,
+    0 2px 0 #c9c9c9,
+    0 3px 0 #bbb,
+    0 4px 0 #b9b9b9,
+    0 5px 0 #aaa,
+    0 6px 1px rgba(0, 0, 0, 0.1),
+    0 0 5px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    0 3px 5px rgba(0, 0, 0, 0.2),
+    0 5px 10px rgba(0, 0, 0, 0.25),
+    0 10px 10px rgba(0, 0, 0, 0.2),
+    0 20px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Print styles for resume */
+@media print {
+  @page {
+    margin: 1cm;
+  }
+
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  header,
+  footer,
+  .print-hide {
+    display: none !important;
+  }
+
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .print-break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  .print-break-after {
+    break-after: page;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: black !important;
+  }
+
+  p,
+  li,
+  span {
+    color: #333 !important;
+  }
+
+  .text-muted-foreground {
+    color: #555 !important;
+  }
+
+  .bg-card {
+    background-color: white !important;
+  }
+
+  .bg-primary\/10 {
+    background-color: #f9f9f9 !important;
+  }
+
+  .border {
+    border-color: #ddd !important;
+  }
+
+  .rounded-lg {
+    border-radius: 0 !important;
+  }
+
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+}
+
+/* Perspective text animation */
+.perspective-text {
+  perspective: 1000px;
+  display: inline-block;
+}
+
+.perspective-text span {
+  display: inline-block;
+  transform-style: preserve-3d;
+  transition: transform 0.3s;
+}
+
+.perspective-text:hover span {
+  transform: rotateY(360deg);
+  transition-duration: 1.5s;
+}
+
+/* Glitch effect */
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch::before {
+  left: 2px;
+  text-shadow: -1px 0 #ff00ff;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px;
+  text-shadow: -1px 0 #00ffff;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim2 5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip: rect(31px, 9999px, 94px, 0);
+  }
+  5% {
+    clip: rect(70px, 9999px, 71px, 0);
+  }
+  10% {
+    clip: rect(29px, 9999px, 83px, 0);
+  }
+  15% {
+    clip: rect(16px, 9999px, 91px, 0);
+  }
+  20% {
+    clip: rect(2px, 9999px, 23px, 0);
+  }
+  25% {
+    clip: rect(46px, 9999px, 25px, 0);
+  }
+  30% {
+    clip: rect(31px, 9999px, 88px, 0);
+  }
+  100% {
+    clip: rect(31px, 9999px, 88px, 0);
+  }
+}
+
+@keyframes glitch-anim2 {
+  0% {
+    clip: rect(65px, 9999px, 99px, 0);
+  }
+  5% {
+    clip: rect(79px, 9999px, 43px, 0);
+  }
+  10% {
+    clip: rect(26px, 9999px, 33px, 0);
+  }
+  15% {
+    clip: rect(20px, 9999px, 31px, 0);
+  }
+  20% {
+    clip: rect(46px, 9999px, 73px, 0);
+  }
+  25% {
+    clip: rect(23px, 9999px, 55px, 0);
+  }
+  30% {
+    clip: rect(76px, 9999px, 93px, 0);
+  }
+  100% {
+    clip: rect(76px, 9999px, 93px, 0);
+  }
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* Light theme hover glow */
+:root:not(.dark) .hover-glow:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+  transform: translateY(-3px);
+}
+
+/* Dark theme hover glow */
+.dark .hover-glow:hover {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+  transform: translateY(-3px);
+}
+
+/* Button hover effects */
+.button-hover-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-hover-effect::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.button-hover-effect:hover::after {
+  transform: translateX(0);
+}
+
+/* Tilt effect */
+.tilt-effect {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.tilt-effect:hover {
+  transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+}
+
+/* Shine effect */
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-effect::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 100%);
+  transform: skewX(-25deg);
+  transition: all 0.75s;
+}
+
+.shine-effect:hover::before {
+  left: 125%;
+}
+
+/* Light mode specific styles */
+:root:not(.dark) .light-mode-shadow {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+:root:not(.dark) .light-mode-border {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode specific styles */
+.dark .dark-mode-glow {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+}
+
+.dark .dark-mode-border {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Light theme card styles */
+:root:not(.dark) .card {
+  background-color: white;
+  border-color: rgba(59, 130, 246, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+:root:not(.dark) .card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Light theme button styles */
+:root:not(.dark) .btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+:root:not(.dark) .btn-primary:hover {
+  background-color: #2563eb;
+}
+
+:root:not(.dark) .btn-outline {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+:root:not(.dark) .btn-outline:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
