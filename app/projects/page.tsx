@@ -5,6 +5,7 @@ import ProjectsHero from "@/components/projects-hero"
 import ProjectCard from "@/components/project-card"
 
 export default function ProjectsPage() {
+  // Define projects data directly in the component to ensure it's always available
   const projects = [
     {
       id: 1,
@@ -56,6 +57,7 @@ export default function ProjectsPage() {
     },
   ]
 
+  // Ensure categories is defined and has default values
   const categories = [
     "All",
     "3D Visualization",
@@ -89,25 +91,37 @@ export default function ProjectsPage() {
 
           {/* Category Filter */}
           <div className="flex flex-wrap gap-2 mb-12">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={category === "All" ? "default" : "outline"}
-                className={
-                  category === "All"
-                    ? "bg-fuchsia-600 hover:bg-fuchsia-700"
-                    : "text-white border-white/20 hover:bg-white/10"
-                }
-              >
-                {category}
+            {/* Add null check before mapping */}
+            {categories && categories.length > 0 ? (
+              categories.map((category) => (
+                <Button
+                  key={category}
+                  variant={category === "All" ? "default" : "outline"}
+                  className={
+                    category === "All"
+                      ? "bg-fuchsia-600 hover:bg-fuchsia-700"
+                      : "text-white border-white/20 hover:bg-white/10"
+                  }
+                >
+                  {category}
+                </Button>
+              ))
+            ) : (
+              <Button variant="default" className="bg-fuchsia-600 hover:bg-fuchsia-700">
+                All
               </Button>
-            ))}
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+            {/* Add null check before mapping */}
+            {projects && projects.length > 0 ? (
+              projects.map((project) => <ProjectCard key={project.id} project={project} />)
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-slate-400">No projects available at the moment.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>

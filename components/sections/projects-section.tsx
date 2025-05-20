@@ -94,11 +94,18 @@ export default function ProjectsSection() {
         </ScrollReveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project, index) => (
-            <ScrollReveal key={project.id} delay={index * 0.1}>
-              <ProjectCard project={project} />
-            </ScrollReveal>
-          ))}
+          {/* Add null check before mapping */}
+          {projects && projects.length > 0 ? (
+            projects.map((project, index) => (
+              <ScrollReveal key={project.id} delay={index * 0.1}>
+                <ProjectCard project={project} />
+              </ScrollReveal>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-muted-foreground">No projects available at the moment.</p>
+            </div>
+          )}
         </div>
 
         <ScrollReveal delay={0.6}>

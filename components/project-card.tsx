@@ -1,19 +1,18 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 import Image from "next/image"
 import { ExternalLink, Github, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { useState } from "react"
 import { motion } from "framer-motion"
 import { useTheme } from "@/components/theme-provider"
 
 export default function ProjectCard({ project }) {
-  const [isHovered, setIsHovered] = useState(false)
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   // Mark component as mounted
   useEffect(() => {
@@ -24,6 +23,11 @@ export default function ProjectCard({ project }) {
   const isDarkMode = !mounted
     ? true
     : theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+
+  // Add null check for project
+  if (!project) {
+    return null
+  }
 
   return (
     <motion.div
@@ -47,7 +51,7 @@ export default function ProjectCard({ project }) {
             // For GIFs, use a regular img tag to ensure animation works
             <img
               src={project.image || "/placeholder.svg"}
-              alt={project.title}
+              alt={project.title || "Project"}
               className={`w-full h-full object-cover transition-transform duration-500 ${
                 isHovered ? "scale-110" : "scale-100"
               }`}
@@ -56,11 +60,11 @@ export default function ProjectCard({ project }) {
             // For static images, use Next.js Image component with unoptimized for external URLs
             <Image
               src={project.image || `/placeholder.svg?height=400&width=600`}
-              alt={project.title}
+              alt={project.title || "Project"}
               width={600}
               height={400}
               className={`object-cover transition-transform duration-500 ${isHovered ? "scale-110" : "scale-100"}`}
-              unoptimized={project.image.startsWith("https://")}
+              unoptimized={project.image?.startsWith?.("https://") || false}
             />
           )}
           <motion.div
@@ -70,7 +74,7 @@ export default function ProjectCard({ project }) {
             transition={{ duration: 0.3 }}
           >
             <motion.a
-              href={project.liveUrl}
+              href={project.liveUrl || "#"}
               target="_blank"
               rel="noopener noreferrer"
               className={`${
@@ -85,7 +89,7 @@ export default function ProjectCard({ project }) {
               <Eye className="h-5 w-5" />
             </motion.a>
             <motion.a
-              href={project.githubUrl}
+              href={project.githubUrl || "#"}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-secondary text-foreground p-2 rounded-full mx-2 hover:bg-secondary/80 transition-colors"
@@ -101,23 +105,34 @@ export default function ProjectCard({ project }) {
         </div>
 
         <CardHeader className="p-4">
-          <CardTitle>{project.title}</CardTitle>
-          <CardDescription className="line-clamp-2">{project.description}</CardDescription>
+          <CardTitle>{project.title || "Untitled Project"}</CardTitle>
+          <CardDescription className="line-clamp-2">{project.description || ""}</CardDescription>
         </CardHeader>
 
         <CardContent className="p-4 pt-0 flex-grow">
           <div className="flex flex-wrap gap-2">
-            {project.tags.map((tag) => (
+            {/* Add null check before mapping */}
+            {project.tags && project.tags.length > 0 ? (
+              project.tags.map((tag) => (
+                <motion.span
+                  key={tag}
+                  className={`text-xs ${
+                    isDarkMode ? "bg-secondary" : "bg-blue-100 text-blue-800"
+                  } px-2 py-1 rounded-full`}
+                  whileHover={{ scale: 1.1 }}
+                >
+                  {tag}
+                </motion.span>
+              ))
+            ) : (
               <motion.span
-                key={tag}
                 className={`text-xs ${
                   isDarkMode ? "bg-secondary" : "bg-blue-100 text-blue-800"
                 } px-2 py-1 rounded-full`}
-                whileHover={{ scale: 1.1 }}
               >
-                {tag}
+                Project
               </motion.span>
-            ))}
+            )}
           </div>
         </CardContent>
 
@@ -133,7 +148,7 @@ export default function ProjectCard({ project }) {
             } transition-colors duration-300`}
           >
             <a
-              href={project.liveUrl}
+              href={project.liveUrl || "#"}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2"
