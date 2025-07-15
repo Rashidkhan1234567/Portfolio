@@ -1,90 +1,41 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
-import { Canvas, useFrame } from "@react-three/fiber"
-import { Text } from "@react-three/drei"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "@/components/theme-provider"
 
-// Animated cube for loading indicator - theme aware with improved light theme colors
-function LoadingCube({ progress }) {
-  const meshRef = useRef()
-  const { theme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Default to dark theme during SSR
-  const isDarkMode = !mounted
-    ? true
-    : theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
-
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime()
-    meshRef.current.rotation.x = t * 0.5
-    meshRef.current.rotation.y = t * 0.7
-  })
-
+// CSS-based loading cube
+function LoadingCube({ progress, isDarkMode }) {
   return (
-    <group>
-      <mesh ref={meshRef}>
-        <boxGeometry args={[2, 2, 2]} />
-        <meshStandardMaterial
-          color={isDarkMode ? "#8b5cf6" : "#3b82f6"}
-          wireframe={true}
-          emissive={isDarkMode ? "#8b5cf6" : "#3b82f6"}
-          emissiveIntensity={0.5}
-        />
-      </mesh>
+    <div className="flex flex-col items-center justify-center">
+      {/* Animated cube */}
+      <div
+        className={`w-16 h-16 border-4 ${
+          isDarkMode ? "border-purple-500" : "border-blue-500"
+        } border-t-transparent rounded-lg animate-spin mb-6`}
+        style={{
+          animation: "spin 2s linear infinite, pulse 2s ease-in-out infinite alternate",
+        }}
+      />
 
       {/* Progress text */}
-      <Text
-        position={[0, -3, 0]}
-        fontSize={0.5}
-        color={isDarkMode ? "white" : "#1e293b"}
-        anchorX="center"
-        anchorY="middle"
-      >
-        {`${Math.round(progress)}%`}
-      </Text>
+      <div className="text-center">
+        <div className={`text-4xl font-bold mb-2 ${isDarkMode ? "text-purple-300" : "text-blue-600"}`}>
+          {Math.round(progress)}%
+        </div>
+        <div className={`text-lg ${isDarkMode ? "text-pink-400" : "text-indigo-600"}`}>Loading...</div>
+      </div>
 
-      <Text
-        position={[0, -4, 0]}
-        fontSize={0.3}
-        color={isDarkMode ? "#ec4899" : "#6366f1"}
-        anchorX="center"
-        anchorY="middle"
-      >
-        Loading...
-      </Text>
-    </group>
-  )
-}
-
-// Loading scene
-function LoadingScene({ progress }) {
-  const { theme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Default to dark theme during SSR
-  const isDarkMode = !mounted
-    ? true
-    : theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
-
-  return (
-    <>
-      <ambientLight intensity={0.2} />
-      <directionalLight position={[5, 5, 5]} intensity={0.5} color={isDarkMode ? "#8b5cf6" : "#3b82f6"} />
-      <directionalLight position={[-5, -5, 5]} intensity={0.5} color={isDarkMode ? "#ec4899" : "#6366f1"} />
-
-      <LoadingCube progress={progress} />
-    </>
+      {/* Progress bar */}
+      <div className="w-64 h-2 bg-secondary rounded-full mt-4 overflow-hidden">
+        <motion.div
+          className={`h-full ${isDarkMode ? "bg-purple-500" : "bg-blue-500"} rounded-full`}
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.3 }}
+        />
+      </div>
+    </div>
   )
 }
 
@@ -137,11 +88,7 @@ export default function LoadingAnimation({ isLoading, setIsLoading }) {
             isDarkMode ? "bg-background" : "bg-slate-50"
           } flex items-center justify-center`}
         >
-          <div className="w-64 h-64">
-            <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-              <LoadingScene progress={progress} />
-            </Canvas>
-          </div>
+          <LoadingCube progress={progress} isDarkMode={isDarkMode} />
         </motion.div>
       )}
     </AnimatePresence>

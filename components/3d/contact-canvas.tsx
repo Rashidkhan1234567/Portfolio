@@ -1,45 +1,53 @@
 "use client"
 
-import { useRef } from "react"
-import { Canvas, useFrame } from "@react-three/fiber"
-import { Environment, Float } from "@react-three/drei"
-import { EffectComposer, Bloom } from "@react-three/postprocessing"
+import { useEffect, useState } from "react"
+import { useTheme } from "@/components/theme-provider"
 
-function Scene() {
-  const sphereRef = useRef()
-
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime()
-    sphereRef.current.rotation.x = Math.sin(t / 4) * 0.3
-    sphereRef.current.rotation.y = Math.sin(t / 2) * 0.2
-  })
-
+// Simple CSS-based contact animation
+function ContactAnimation({ isDarkMode }) {
   return (
-    <>
-      <ambientLight intensity={0.2} />
-      <directionalLight position={[5, 5, 5]} intensity={0.5} color="#8b5cf6" />
-      <directionalLight position={[-5, -5, 5]} intensity={0.5} color="#ec4899" />
+    <div className="relative w-full h-full flex items-center justify-center">
+      {/* Central element */}
+      <div
+        className={`w-24 h-24 rounded-full ${
+          isDarkMode
+            ? "bg-gradient-to-r from-purple-500/30 to-pink-500/30 border-2 border-purple-500/50"
+            : "bg-gradient-to-r from-blue-500/30 to-indigo-500/30 border-2 border-blue-500/50"
+        } backdrop-blur-sm floating flex items-center justify-center`}
+      >
+        <div className={`w-12 h-12 rounded-full ${isDarkMode ? "bg-purple-500/50" : "bg-blue-500/50"} animate-pulse`} />
+      </div>
 
-      <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
-        <mesh ref={sphereRef}>
-          <sphereGeometry args={[2, 64, 64]} />
-          <meshStandardMaterial color="#8b5cf6" metalness={0.8} roughness={0.2} />
-        </mesh>
-      </Float>
-
-      <Environment preset="night" />
-
-      <EffectComposer>
-        <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} />
-      </EffectComposer>
-    </>
+      {/* Orbiting elements */}
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          className={`absolute w-4 h-4 rounded-full ${isDarkMode ? "bg-pink-500/60" : "bg-indigo-500/60"}`}
+          style={{
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            animation: `orbit 8s linear infinite`,
+            animationDelay: `${i * 1.3}s`,
+          }}
+        />
+      ))}
+    </div>
   )
 }
 
 export default function ContactCanvas() {
-  return (
-    <Canvas camera={{ position: [0, 0, 6], fov: 50 }}>
-      <Scene />
-    </Canvas>
-  )
+  const { theme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Default to dark theme during SSR
+  const isDarkMode = !mounted
+    ? true
+    : theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+
+  return <ContactAnimation isDarkMode={isDarkMode} />
 }

@@ -214,6 +214,16 @@ html {
   }
 }
 
+/* Orbit animation for contact section */
+@keyframes orbit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(60px) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(60px) rotate(-360deg);
+  }
+}
+
 /* 3D text effect */
 .text-3d {
   text-shadow:
