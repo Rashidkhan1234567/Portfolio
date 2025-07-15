@@ -1,81 +1,81 @@
 "use client"
 
-import { useRef } from "react"
-import { Canvas, useFrame } from "@react-three/fiber"
-import { Environment, PerspectiveCamera } from "@react-three/drei"
-import { EffectComposer, Bloom } from "@react-three/postprocessing"
+import { useEffect, useState } from "react"
+import { useTheme } from "@/components/theme-provider"
 
-function FloatingObject({ position, rotation, scale, color, speed = 1 }) {
-  const mesh = useRef()
-
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime() * speed
-    mesh.current.position.y = position[1] + Math.sin(t) * 0.5
-    mesh.current.rotation.x = rotation[0] + Math.sin(t * 0.5) * 0.2
-    mesh.current.rotation.z = rotation[2] + Math.cos(t * 0.3) * 0.2
-  })
-
-  return (
-    <mesh ref={mesh} position={position} rotation={rotation} scale={scale}>
-      <icosahedronGeometry args={[1, 1]} />
-      <meshStandardMaterial color={color} metalness={0.8} roughness={0.2} />
-    </mesh>
-  )
-}
-
-function Scene() {
-  const cameraRef = useRef()
-
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime()
-    if (cameraRef.current) {
-      cameraRef.current.position.x = Math.sin(t * 0.1) * 2
-      cameraRef.current.position.y = Math.cos(t * 0.1) * 1
-      cameraRef.current.lookAt(0, 0, 0)
-    }
-  })
+// Simple CSS-based hero animation
+function HeroAnimation({ isDarkMode }) {
+  const skills = [
+    { name: "React", position: { left: "15%", top: "25%" }, delay: 0 },
+    { name: "Next.js", position: { left: "75%", top: "35%" }, delay: 0.5 },
+    { name: "Node.js", position: { left: "25%", top: "65%" }, delay: 1 },
+    { name: "MongoDB", position: { left: "70%", top: "75%" }, delay: 1.5 },
+    { name: "Firebase", position: { left: "50%", top: "20%" }, delay: 2 },
+    { name: "Express", position: { left: "20%", top: "45%" }, delay: 2.5 },
+  ]
 
   return (
-    <>
-      <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 15]} fov={50} />
+    <div className="relative w-full h-full overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/30 to-background-secondary/30" />
 
-      {/* Background gradient sphere */}
-      <mesh position={[0, 0, -10]}>
-        <sphereGeometry args={[15, 32, 32]} />
-        <meshStandardMaterial color="#000000" side={1} />
-      </mesh>
+      {/* Skill badges */}
+      {skills.map((skill, index) => (
+        <div
+          key={skill.name}
+          className={`absolute px-3 py-2 rounded-lg text-sm font-medium backdrop-blur-sm ${
+            isDarkMode
+              ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
+              : "bg-blue-500/20 text-blue-700 border border-blue-500/30"
+          } floating hover:scale-110 transition-transform duration-300 cursor-pointer`}
+          style={{
+            left: skill.position.left,
+            top: skill.position.top,
+            animationDelay: `${skill.delay}s`,
+          }}
+        >
+          {skill.name}
+        </div>
+      ))}
 
-      {/* Floating objects */}
-      <FloatingObject position={[-4, 2, 0]} rotation={[0.5, 0.5, 0]} scale={1.5} color="#ff00ff" speed={0.8} />
-      <FloatingObject position={[5, -2, 2]} rotation={[0.2, 0.3, 0.1]} scale={1.2} color="#00ffff" speed={1.2} />
-      <FloatingObject position={[0, 3, -2]} rotation={[0.1, 0.5, 0.3]} scale={0.8} color="#ff00aa" speed={1} />
-      <FloatingObject position={[-3, -3, 1]} rotation={[0.3, 0.2, 0.1]} scale={1} color="#aa00ff" speed={0.9} />
-      <FloatingObject position={[4, 0, -1]} rotation={[0.5, 0.1, 0.2]} scale={0.7} color="#00aaff" speed={1.1} />
+      {/* Central glow effect */}
+      <div
+        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full blur-3xl opacity-20 ${
+          isDarkMode ? "bg-purple-500" : "bg-blue-500"
+        } animate-pulse`}
+      />
 
-      {/* Ambient light */}
-      <ambientLight intensity={0.2} />
-
-      {/* Directional lights for dramatic effect */}
-      <directionalLight position={[5, 5, 5]} intensity={0.5} color="#ff00ff" />
-      <directionalLight position={[-5, -5, 5]} intensity={0.5} color="#00ffff" />
-
-      {/* Environment for reflections */}
-      <Environment preset="night" />
-
-      {/* Post-processing effects */}
-      <EffectComposer>
-        <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} />
-      </EffectComposer>
-    </>
+      {/* Floating particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        {Array.from({ length: 15 }).map((_, i) => (
+          <div
+            key={`particle-${i}`}
+            className={`absolute w-1 h-1 rounded-full ${isDarkMode ? "bg-purple-400/30" : "bg-blue-400/30"} floating`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${i * 0.2}s`,
+              animationDuration: `${3 + Math.random() * 2}s`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
   )
 }
 
 export default function HeroScene() {
-  return (
-    <div className="absolute inset-0 bg-gradient-to-b from-black to-slate-950">
-      <Canvas>
-        <Scene />
-      </Canvas>
-    </div>
-  )
+  const { theme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Default to dark theme during SSR
+  const isDarkMode = !mounted
+    ? true
+    : theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+
+  return <HeroAnimation isDarkMode={isDarkMode} />
 }

@@ -1,76 +1,92 @@
 "use client"
 
-import { useRef } from "react"
-import { Canvas, useFrame } from "@react-three/fiber"
-import { Environment, Float, Text } from "@react-three/drei"
-import { EffectComposer, Bloom } from "@react-three/postprocessing"
+import { useEffect, useState } from "react"
+import { useTheme } from "@/components/theme-provider"
 
-function Scene() {
-  const groupRef = useRef()
-
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime()
-    groupRef.current.rotation.y = Math.sin(t * 0.1) * 0.2
-  })
-
+// Simple CSS-based projects hero animation
+function ProjectsAnimation({ isDarkMode }) {
   return (
-    <>
-      <ambientLight intensity={0.2} />
-      <directionalLight position={[5, 5, 5]} intensity={0.5} color="#ff00ff" />
-      <directionalLight position={[-5, -5, 5]} intensity={0.5} color="#00ffff" />
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950 to-slate-900" />
 
-      <group ref={groupRef}>
-        <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-          <Text
-            font="/fonts/Inter_Bold.json"
-            fontSize={2}
-            color="#ffffff"
-            position={[0, 0, 0]}
-            anchorX="center"
-            anchorY="middle"
-          >
-            PROJECTS
-          </Text>
-        </Float>
+      {/* Central "PROJECTS" text */}
+      <div className="relative z-10">
+        <h1
+          className={`text-6xl md:text-8xl font-bold ${
+            isDarkMode ? "text-white" : "text-gray-800"
+          } animate-pulse text-center`}
+        >
+          PROJECTS
+        </h1>
+      </div>
 
-        {/* Decorative elements */}
+      {/* Decorative elements */}
+      <div className="absolute inset-0 pointer-events-none">
         {Array.from({ length: 20 }).map((_, i) => {
           const angle = (i / 20) * Math.PI * 2
-          const radius = 5
+          const radius = 200 + Math.random() * 100
           const x = Math.cos(angle) * radius
           const y = Math.sin(angle) * radius
-          const z = (Math.random() - 0.5) * 2
 
           return (
-            <mesh key={i} position={[x, y, z]} scale={0.1 + Math.random() * 0.2}>
-              <boxGeometry />
-              <meshStandardMaterial
-                color={i % 2 === 0 ? "#ff00ff" : "#00ffff"}
-                emissive={i % 2 === 0 ? "#ff00ff" : "#00ffff"}
-                emissiveIntensity={0.5}
-                metalness={0.8}
-                roughness={0.2}
-              />
-            </mesh>
+            <div
+              key={i}
+              className={`absolute w-2 h-2 ${
+                i % 2 === 0
+                  ? isDarkMode
+                    ? "bg-purple-500/40"
+                    : "bg-blue-500/40"
+                  : isDarkMode
+                    ? "bg-pink-500/40"
+                    : "bg-indigo-500/40"
+              } rounded-sm floating`}
+              style={{
+                left: `calc(50% + ${x}px)`,
+                top: `calc(50% + ${y}px)`,
+                transform: "translate(-50%, -50%)",
+                animationDelay: `${i * 0.1}s`,
+                animationDuration: `${2 + Math.random() * 3}s`,
+              }}
+            />
           )
         })}
-      </group>
+      </div>
 
-      <Environment preset="night" />
-
-      <EffectComposer>
-        <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} />
-      </EffectComposer>
-    </>
+      {/* Rotating border effect */}
+      <div
+        className={`absolute inset-0 border-2 ${
+          isDarkMode ? "border-purple-500/20" : "border-blue-500/20"
+        } rounded-full`}
+        style={{
+          width: "400px",
+          height: "400px",
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+          animation: "spin 20s linear infinite",
+        }}
+      />
+    </div>
   )
 }
 
 export default function ProjectsHero() {
+  const { theme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Default to dark theme during SSR
+  const isDarkMode = !mounted
+    ? true
+    : theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+
   return (
     <div className="w-full h-[40vh] bg-gradient-to-b from-black to-slate-950">
-      <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
-        <Scene />
-      </Canvas>
+      <ProjectsAnimation isDarkMode={isDarkMode} />
     </div>
   )
 }
