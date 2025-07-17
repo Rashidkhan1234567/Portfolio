@@ -34,14 +34,18 @@ export default function ProjectsSection() {
     },
     {
       id: 3,
-      title: "ChatsApp",
+      title: "Microfinance Hackathon",
       description:
-        "Real-time chat application with instant messaging, user presence indicators, and multimedia sharing capabilities.",
-      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Chatsapp-XjXOgnLtsZ7pzywDvpOFgZPHfJFFSi.png",
+        "A comprehensive microfinance platform built for hackathon with separate frontend and backend deployments. Features loan management, user authentication, and financial tracking.",
+      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/microfinance-preview.png",
       isGif: false,
-      liveUrl: "https://rashidfirmwithreact.netlify.app/",
-      githubUrl: "https://github.com/Rashidkhan1234567/webchat",
-      tags: ["React", "Firebase", "CSS"],
+      isFullStack: true,
+      frontendUrl: "https://front-end-five-liart.vercel.app/",
+      backendUrl: "https://back-end-rho-seven.vercel.app/",
+      githubUrl: "https://github.com/Rashidkhan1234567/Microfinance-Hackathon",
+      backendWarning:
+        "Note: Some features like sign-in/sign-up forms may not work if the backend server is down. Both frontend and backend are deployed separately.",
+      tags: ["React", "Node.js", "Express", "MongoDB", "JWT", "Full-Stack"],
     },
     {
       id: 4,

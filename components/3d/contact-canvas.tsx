@@ -7,31 +7,46 @@ import { useTheme } from "@/components/theme-provider"
 function ContactAnimation({ isDarkMode }) {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      {/* Central element */}
-      <div
-        className={`w-24 h-24 rounded-full ${
-          isDarkMode
-            ? "bg-gradient-to-r from-purple-500/30 to-pink-500/30 border-2 border-purple-500/50"
-            : "bg-gradient-to-r from-blue-500/30 to-indigo-500/30 border-2 border-blue-500/50"
-        } backdrop-blur-sm floating flex items-center justify-center`}
-      >
-        <div className={`w-12 h-12 rounded-full ${isDarkMode ? "bg-purple-500/50" : "bg-blue-500/50"} animate-pulse`} />
+      {/* Background grid of subtle nodes */}
+      <div className="absolute inset-0 grid grid-cols-8 md:grid-cols-12 lg:grid-cols-16 gap-4 p-8 opacity-20">
+        {Array.from({ length: 100 }).map((_, i) => (
+          <div
+            key={i}
+            className={`w-2 h-2 rounded-full ${isDarkMode ? "bg-purple-400" : "bg-blue-400"} animate-pulse-random`}
+            style={{ animationDelay: `${Math.random() * 5}s` }}
+          />
+        ))}
       </div>
 
-      {/* Orbiting elements */}
-      {Array.from({ length: 6 }).map((_, i) => (
+      {/* Central pulsating element */}
+      <div
+        className={`relative w-40 h-40 rounded-full flex items-center justify-center z-10
+          ${isDarkMode ? "bg-gradient-to-br from-purple-600/40 to-pink-600/40 border-2 border-purple-500/60" : "bg-gradient-to-br from-blue-600/40 to-indigo-600/40 border-2 border-blue-500/60"}
+          backdrop-blur-sm animate-pulse-strong`}
+      >
         <div
-          key={i}
-          className={`absolute w-4 h-4 rounded-full ${isDarkMode ? "bg-pink-500/60" : "bg-indigo-500/60"}`}
-          style={{
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            animation: `orbit 8s linear infinite`,
-            animationDelay: `${i * 1.3}s`,
-          }}
+          className={`w-20 h-20 rounded-full ${isDarkMode ? "bg-purple-500/60" : "bg-blue-500/60"} animate-ping-slow`}
         />
-      ))}
+        <div className={`absolute text-3xl font-bold ${isDarkMode ? "text-white/80" : "text-gray-800/80"}`}>
+          CONNECT
+        </div>
+      </div>
+
+      {/* Floating particles (can keep this for subtle movement) */}
+      <div className="absolute inset-0 pointer-events-none">
+        {Array.from({ length: 15 }).map((_, i) => (
+          <div
+            key={`particle-${i}`}
+            className={`absolute w-1 h-1 rounded-full ${isDarkMode ? "bg-pink-400/40" : "bg-indigo-400/40"} floating`}
+            style={{
+              left: `${10 + Math.random() * 80}%`,
+              top: `${10 + Math.random() * 80}%`,
+              animationDelay: `${i * 0.3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`,
+            }}
+          />
+        ))}
+      </div>
     </div>
   )
 }
